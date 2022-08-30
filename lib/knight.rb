@@ -7,6 +7,7 @@ class Knight
   VALID_MOVES =
     [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]].freeze
   attr_reader :location
+  attr_accessor :parent, :children
 
   def initialize(location, parent = nil)
     @location = location
@@ -15,8 +16,10 @@ class Knight
   end
 
   def check_moves
-    VALID_MOVES.each_with_index.map do |square, index|
-      square + @location[index] unless (square + @location[index]).negative? || ((square + @location[index]) > 7)
+    VALID_MOVES.map do |move|
+      move.each_with_index do |square, index|
+        square + @location[index] unless (square + @location[index]).negative? || ((square + @location[index]) > 7)
+      end
     end
   end
 end

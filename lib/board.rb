@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'knight'
+
 # creates a chess board to specify piece position and boundaries
 class Board
   def initialize
@@ -16,6 +18,13 @@ class Board
     squares.each_slice(8) { |row| print "#{row}\n" }
   end
 
+  def knight_moves(start, last)
+    root = build_tree(start, last)
+    path = []
+    trace_path(root, path, start)
+    print_results(path)
+  end
+
   private
 
   attr_reader :board
@@ -25,18 +34,30 @@ class Board
     board.each(&:reverse!)
   end
 
-  def knight_moves(start, last)
-    make_tree(start, last)
-    history = []
+  def build_tree(start, last)
+    queue = [Knight.new(start)]
+    root = queue.shift
+    until root.location == last
+      root.check_moves.each do |move|
+        root.children << temp = Knight.new(move, root)
+        queue << temp
+      end
+      root = queue.shift
+    end
+    root
   end
 
-  def build_tree(start, last)
-    root = Knight.new(start)
-    until root.location == last
-      root.next_moves.each do |move|
-        root.children << Knight.new(root, move)
-      end
-      # wait I need to move through the parent nodes oops
+  def trace_path(root, path, start)
+    until root.location == start
+      path.unshift(root.location)
+      root = root.parent
     end
+    path.unshift(start)
+  end
+
+  def print_results(path)
+    moves = path.length - 1
+    puts "You made it in #{moves} moves! Here is your path:"
+    path.each { |step| print step }
   end
 end
