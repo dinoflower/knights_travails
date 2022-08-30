@@ -8,11 +8,15 @@ class Knight
     [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]].freeze
   attr_reader :location
 
-  def initialize(location = nil)
+  def initialize(location, parent = nil)
     @location = location
-    @parent = nil
+    @parent = parent
+    @children = []
+  end
+
+  def check_moves
+    VALID_MOVES.each_with_index.map do |square, index|
+      square + @location[index] unless (square + @location[index]).negative? || ((square + @location[index]) > 7)
+    end
   end
 end
-
-# up to 8 possible children... do they need to be named variables?
-# NO each child only needs ONE PARENT work BACKWARDS

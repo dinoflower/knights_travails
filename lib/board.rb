@@ -26,21 +26,17 @@ class Board
   end
 
   def knight_moves(start, last)
-    location = make_tree(start, last)
+    make_tree(start, last)
     history = []
   end
 
-  def make_tree(start, last); end
-end
-
-# creates a node at a given set of coordinates
-class Knight
-  VALID_MOVES =
-    [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]].freeze
-  attr_reader :location
-
-  def initialize(board, location = nil)
-    @board = board
-    @location = location
+  def build_tree(start, last)
+    root = Knight.new(start)
+    until root.location == last
+      root.next_moves.each do |move|
+        root.children << Knight.new(root, move)
+      end
+      # wait I need to move through the parent nodes oops
+    end
   end
 end
