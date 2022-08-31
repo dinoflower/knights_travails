@@ -18,10 +18,16 @@ class Board
     squares.each_slice(8) { |row| print "#{row}\n" }
   end
 
-  def knight_moves(start, last)
-    root = build_tree(start, last)
+  def mark_board(location)
+    x = location[0]
+    y = location[1]
+    @board[x][y] = 'X' if @board[x][y].nil?
+  end
+
+  def knight_moves(start, target)
+    root = build_tree(start, target)
     path = []
-    trace_path(root, path, start)
+    trace_path(root, path, target)
     print_results(path)
   end
 
@@ -30,21 +36,20 @@ class Board
   attr_reader :board
 
   def generate_board
-    board = (1..8).to_a.reverse.product((1..8).to_a)
-    board.each(&:reverse!)
+    Array.new(8) { Array.new(8) }
   end
 
-  def build_tree(start, last)
+  def build_tree(start, target)
     queue = [Knight.new(start)]
-    root = queue.shift
-    until root.location == last
-      root.check_moves.each do |move|
-        root.children << temp = Knight.new(move, root)
+    until queue.empty?
+      current = queue.shift
+      return current if current.location == target
+
+      current.check_moves.each do |move|
+        current.children << temp = Knight.new(move, current)
         queue << temp
       end
-      root = queue.shift
     end
-    root
   end
 
   def trace_path(root, path, start)
@@ -56,8 +61,9 @@ class Board
   end
 
   def print_results(path)
-    moves = path.length - 1
-    puts "You made it in #{moves} moves! Here is your path:"
+    puts "You made it in #{path.length - 1} moves! Here is your path:"
     path.each { |step| print step }
   end
 end
+
+# okay, if it can cycle through the children, we can find the min path, right?

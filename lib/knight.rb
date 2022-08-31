@@ -16,10 +16,12 @@ class Knight
   end
 
   def check_moves
-    VALID_MOVES.map do |move|
-      move.each_with_index do |square, index|
-        square + @location[index] unless (square + @location[index]).negative? || ((square + @location[index]) > 7)
+    moves = VALID_MOVES.map do |move|
+      move.each_with_index do |coord, index|
+        coord + @location[index] unless (coord + @location[index]).negative? || ((coord + @location[index]) > 7)
       end
     end
+    moves.delete_if { |move| move.include?(nil) }
+    moves
   end
 end
