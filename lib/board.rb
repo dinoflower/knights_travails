@@ -44,15 +44,17 @@ class Board
   end
 
   def build_tree(start, target)
-    queue = [Knight.new(start)]
+    queue = [Knight.new(self, start)]
     current = queue.shift
     binding.pry
     until current.location == target
       current.check_moves.each do |move|
-        temp = Knight.new(move, current)
-        current.children << temp
-        queue << temp
-        mark_board(move)
+        unless square_passed?(move)
+          temp = Knight.new(self, move, current)
+          current.children << temp
+          queue << temp
+        # mark_board(move)
+        end
       end
       current = queue.shift
     end
@@ -69,7 +71,7 @@ class Board
   end
 
   def print_results(path)
-    puts "You made it in #{path.length - 1} moves! Here is your path:"
+    puts "You made it in #{path.length - 1} move(s)! Here is your path:"
     path.each { |step| print "#{step}\n" }
   end
 end

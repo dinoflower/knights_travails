@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'pry-byebug'
 require_relative 'board'
 
 # creates a node at a given set of coordinates
@@ -9,22 +10,30 @@ class Knight
   attr_reader :location
   attr_accessor :parent, :children
 
-  def initialize(location, parent = nil)
+  def initialize(board, location, parent = nil)
+    @board = board
     @location = location
     @parent = parent
     @children = []
   end
 
-  # TODO: test updated check_moves method
+  def square_passed?(location)
+    @board[location[0]][location[1]].nil?
+  end
+
+  def mark_board(location)
+    @board[location[0]][location[1]] = 'X' unless square_passed?(location)
+  end
+
   def check_moves
     next_moves = VALID_MOVES.map do |move|
-      temp = []
-      move.each_with_index do |coord, index|
-        unless (coord + @location[index]).negative? || ((coord + @location[index]) > 7)
-          temp << (coord + @location[index])
-        end
+      move.filter_map.with_index do |coord, index|
+        coord + @location[index] if (coord + @location[index]).positive? && (coord + @location[index]) < 8
       end
     end
-    next_moves.delete_if { |move| move.include?(nil) }
+    binding.pry
+    next_moves.delete_if { |move| move.length < 2 }
   end
 end
+
+# (coord + @location[index]).negative? || ((coord + @location[index]) > 7)
