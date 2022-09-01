@@ -15,13 +15,16 @@ class Knight
     @children = []
   end
 
+  # TODO: test updated check_moves method
   def check_moves
-    moves = VALID_MOVES.map do |move|
+    next_moves = VALID_MOVES.map do |move|
+      temp = []
       move.each_with_index do |coord, index|
-        coord + @location[index] unless (coord + @location[index]).negative? || ((coord + @location[index]) > 7)
+        unless (coord + @location[index]).negative? || ((coord + @location[index]) > 7)
+          temp << (coord + @location[index])
+        end
       end
     end
-    moves.delete_if { |move| move.include?(nil) }
-    moves
+    next_moves.delete_if { |move| move.include?(nil) }
   end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'pry-byebug'
 require_relative 'knight'
 
 # creates a chess board to specify piece position and boundaries
@@ -18,16 +19,19 @@ class Board
     squares.each_slice(8) { |row| print "#{row}\n" }
   end
 
+  def square_passed?(location)
+    @board[location[0]][location[1]].nil?
+  end
+
   def mark_board(location)
-    x = location[0]
-    y = location[1]
-    @board[x][y] = 'X' if @board[x][y].nil?
+    @board[location[0]][location[1]] = 'X' unless square_passed?(location)
   end
 
   def knight_moves(start, target)
+    mark_board(start)
     root = build_tree(start, target)
     path = []
-    trace_path(root, path, target)
+    trace_path(root, path, start)
     print_results(path)
   end
 
@@ -41,28 +45,32 @@ class Board
 
   def build_tree(start, target)
     queue = [Knight.new(start)]
-    until queue.empty?
-      current = queue.shift
-      return current if current.location == target
-
+    current = queue.shift
+    binding.pry
+    until current.location == target
       current.check_moves.each do |move|
-        current.children << temp = Knight.new(move, current)
+        temp = Knight.new(move, current)
+        current.children << temp
         queue << temp
+        mark_board(move)
       end
+      current = queue.shift
     end
+    current
   end
 
   def trace_path(root, path, start)
     until root.location == start
-      path.unshift(root.location)
+      path << root.location
       root = root.parent
     end
-    path.unshift(start)
+    path << start
+    path.reverse!
   end
 
   def print_results(path)
     puts "You made it in #{path.length - 1} moves! Here is your path:"
-    path.each { |step| print step }
+    path.each { |step| print "#{step}\n" }
   end
 end
 
