@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
 require_relative 'knight'
 
 # creates a chess board to specify piece position and boundaries
@@ -36,19 +35,17 @@ class Board
 
   def build_tree(start, target)
     queue = [Knight.new(self, start)]
-    current = queue.shift
-    until current.location == target
-      binding.pry
+    until queue.empty?
+      current = queue.shift
+      return current if current.location == target
+
       current.check_moves.each do |move|
         next unless square_unpassed?(move)
 
-        temp = Knight.new(self, move, current)
-        current.children << temp
+        current.children << temp = Knight.new(self, move, current)
         queue << temp
       end
-      current = queue.shift
     end
-    current
   end
 
   def square_unpassed?(location)

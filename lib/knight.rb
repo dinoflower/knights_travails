@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
 require_relative 'board'
 
 # creates a node at a given set of coordinates
