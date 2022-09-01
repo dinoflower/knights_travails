@@ -5,30 +5,23 @@ require_relative 'knight'
 
 # creates a chess board to specify piece position and boundaries
 class Board
+  attr_reader :board
+
   def initialize
     @board = generate_board
+    print_board
   end
 
-  def board_array
-    @board.map
-  end
-
-  # prints a reference board with chess positions
   def print_board
-    squares = @board.map(&:join)
-    squares.each_slice(8) { |row| print "#{row}\n" }
-  end
-
-  def square_passed?(location)
-    @board[location[0]][location[1]].nil?
-  end
-
-  def mark_board(location)
-    @board[location[0]][location[1]] = 'X' unless square_passed?(location)
+    print "    0 1 2 3 4 5 6 7\n"
+    print "    _ _ _ _ _ _ _ _\n"
+    @board.each_with_index do |row, i|
+      print "#{i}: |", row.map { |square| square.nil? ? '_' : 'X' }.join('|'), "|\n"
+    end
   end
 
   def knight_moves(start, target)
-    mark_board(start)
+    @board.each { |row| row.fill(nil) }
     root = build_tree(start, target)
     path = []
     trace_path(root, path, start)
@@ -37,8 +30,6 @@ class Board
 
   private
 
-  attr_reader :board
-
   def generate_board
     Array.new(8) { Array.new(8) }
   end
@@ -46,19 +37,22 @@ class Board
   def build_tree(start, target)
     queue = [Knight.new(self, start)]
     current = queue.shift
-    binding.pry
     until current.location == target
+      binding.pry
       current.check_moves.each do |move|
-        unless square_passed?(move)
-          temp = Knight.new(self, move, current)
-          current.children << temp
-          queue << temp
-        # mark_board(move)
-        end
+        next unless square_unpassed?(move)
+
+        temp = Knight.new(self, move, current)
+        current.children << temp
+        queue << temp
       end
       current = queue.shift
     end
     current
+  end
+
+  def square_unpassed?(location)
+    @board[location[0]][location[1]].nil?
   end
 
   def trace_path(root, path, start)
@@ -71,9 +65,11 @@ class Board
   end
 
   def print_results(path)
-    puts "You made it in #{path.length - 1} move(s)! Here is your path:"
+    if path.length - 1 == 1
+      puts 'You made it in 1 move! Here is your path:'
+    else
+      puts "You made it in #{path.length - 1} moves! Here is your path:"
+    end
     path.each { |step| print "#{step}\n" }
   end
 end
-
-# okay, if it can cycle through the children, we can find the min path, right?
