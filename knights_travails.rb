@@ -11,17 +11,17 @@ module KnightsTravails
     puts 'Find the shortest path your knight can take:'
     board = Board.new
     board.knight_moves(format_input, format_input)
+    puts 'Would you like to go again?'
+    answer = $stdin.gets.chr.upcase
+    answer == 'Y' ? prompt_player : exit
   end
 
   def self.format_input
     input = []
-    puts 'Please enter the row and column number of your square (enter/return after each):'
-    pull_numbers { input.push(gets.chop.to_i) }
-  end
-
-  def self.pull_numbers
-    yield
-    yield
+    puts 'Please provide the row number:'
+    input.push(gets.chop.to_i)
+    puts 'Please provide the column number:'
+    input.push(gets.chop.to_i)
   end
 end
 
