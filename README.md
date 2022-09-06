@@ -21,4 +21,4 @@ $ ruby knights_travails.rb
 The program will generate a labeled chessboard and ask for row and column numbers
 for both squares.
 
-[![Run on Repl.it](https://replit.com/badge/github/dinoflower/knights_travails)](https://replit.com/new/github/dinoflower/knights_travails)
+[![Run on Repl.it](https://replit.com/badge/github/dinoflower/knights_travails)](https://replit.com/@dinoflower/knightstravails?v=1)
